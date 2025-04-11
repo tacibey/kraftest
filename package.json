@@ -13,7 +13,8 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.2.1",
     "@astrojs/sitemap": "^3.3.0",
-    "@astrojs/starlight": "^0.32.4",
+    // "@astrojs/starlight": "^0.32.4", // Starlight kaldırılmıştı, bağımlılık olarak kalmışsa silebilirsiniz.
+                                       // Eğer build hatası vermiyorsa şimdilik kalabilir.
     "@tailwindcss/vite": "^4.0.15",
     "astro": "^5.5.4",
     "astro-compressor": "^1.0.0",
@@ -30,12 +31,12 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
-    "astro-vtbot": "^2.1.2",
+    // "astro-vtbot": "^2.1.2", // Eğer Starlight ile ilişkiliyse ve kullanmıyorsanız kaldırabilirsiniz. Şimdilik kalsın.
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "typescript": "^5.8.2"
-"astro-expressive-code": "^0.40.2"
-
+    "typescript": "^5.8.2", // <-- Virgül eklendi
+    // "astro-expressive-code": "^0.40.2" // Kullanmak istemediğiniz için bu satırı sildim veya yorum satırı yaptım.
+                                       // Eğer önceki build hatasının sebebi buysa ve kullanmayacaksanız silmek en doğrusu.
   }
 }
