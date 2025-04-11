@@ -44,51 +44,57 @@ import Icon from "./icons/Icon.astro";
 
       
 <script>
-  // Type alias for supported languages - 
+  // Desteklenen tüm dil kodları için bir tip (type alias) tanımlayın.
   type TLanguage = "en" | "fr" | "es" | "ru" | "de" | "pt" | "it";
-  // array of supported languages - 
-  const languages: TLanguage[] = ["en", "fr", "es", "ru", "de", "pt", "it"];
+
+  // Desteklenen tüm dil kodlarını içeren bir dizi. Bu, URL'lerden dil kodlarını filtrelemek için kullanılır.
+  const supportedLanguages: TLanguage[] = ["en", "fr", "es", "ru", "de", "pt", "it"];
 
   document.addEventListener("DOMContentLoaded", function () {
-    // Only target language picker links
-    const languageLinks = document.querySelectorAll(".hs-dropdown-menu[aria-labelledby='hs-dropdown-hover-event'] a");
-    languageLinks.forEach((element) => {
-      const link = element as HTMLAnchorElement;
-      // Bu satırın dil kodunu doğru alması lazım, test edin.
-      const lang = link
-        .getAttribute("href")
-        ?.replace(/^\//, '') // Baştaki / karakterini kaldırır (hem "" hem de "fr" için çalışır)
-         as TLanguage | ""; // Tip olarak boş string ihtimalini de ekleyelim
+    // Sadece dil seçici menüsündeki linkleri hedef al.
+    const languageLinks = document.querySelectorAll<HTMLAnchorElement>(".hs-dropdown-menu[aria-labelledby='hs-dropdown-hover-event'] a");
 
-      link.addEventListener("click", function (event) {
-        event.preventDefault();
+    languageLinks.forEach((linkElement) => {
+      // Link elementine tıklama olayı ekle.
+      linkElement.addEventListener("click", function (event) {
+        event.preventDefault(); // Normal link davranışını engelle.
 
-        const url = new URL(window.location.href);
-        // Mevcut yoldan dil kodlarını (varsa) ve boş kısımları temizle
-        const currentPathParts = url.pathname
-          .split("/")
-          .filter((part) => part && !languages.includes(part as TLanguage));
-        const currentPath = currentPathParts.join("/");
+        const targetHref = linkElement.getAttribute("href");
+        if (targetHref === null) return; // Hedef URL yoksa çık.
 
+        // Hedef dil kodunu URL'den al ('/fr' -> 'fr', '/' -> '').
+        const targetLangCode = targetHref.replace(/^\//, '') as TLanguage | "";
+
+        const currentUrl = new URL(window.location.href);
+        const currentPathname = currentUrl.pathname;
+
+        // Mevcut URL yolunu '/' karakterine göre böl ve filtrele.
+        // Boş kısımları ve bilinen dil kodlarını çıkararak mevcut içeriğin yolunu bul.
+        const currentPathParts = currentPathname
+          .split('/')
+          .filter(part => part && !(supportedLanguages as string[]).includes(part));
+        const contentPath = currentPathParts.join('/'); // İçerik yolu (örn: 'blog/benim-yazim')
 
         let newPath = "";
-        // Yeni dil 'en' değilse ve boş değilse önek ekle
-        if (lang && lang !== "en") {
-          // Eğer currentPath zaten varsa önüne / ekle, yoksa ekleme
-          newPath = `/${lang}${currentPath ? '/' + currentPath : ''}`;
+
+        // Eğer hedef dil varsayılan dil ('en') değilse ve boş değilse, dil önekini ekle.
+        if (targetLangCode && targetLangCode !== "en") {
+          // Dil kodunu ekle, eğer içerik yolu varsa onu da / ile ekle.
+          newPath = `/${targetLangCode}${contentPath ? '/' + contentPath : ''}`;
         } else {
-          // 'en' veya boşsa, sadece currentPath (varsa / ile)
-           newPath = `/${currentPath}`;
+          // Hedef dil 'en' (veya tanımsız) ise, sadece içerik yolunu (varsa / ile) kullan.
+          newPath = `/${contentPath}`;
         }
 
-        // Çoklu eğik çizgileri tek'e indir ve kök dizin için sadece / kullan
+        // Oluşan yoldaki çoklu '/' karakterlerini tek '/' ile değiştir.
         newPath = newPath.replace(/\/+/g, "/");
-        if (newPath === "" || newPath === "/") newPath = "/"; // Kök dizini garantile
+        // Eğer yol boş kaldıysa (sadece '/' olmalıydı) veya sadece '/' ise, kök dizin olarak ayarla.
+        if (newPath === "" || newPath === "/") newPath = "/";
 
-        window.location.href = `${url.origin}${newPath}${url.search}`;
+        // Yeni oluşturulan URL'ye yönlendir (sayfanın search query'sini koruyarak).
+        window.location.href = `${currentUrl.origin}${newPath}${currentUrl.search}`;
       });
     });
   });
 </script>
-
     
