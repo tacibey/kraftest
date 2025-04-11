@@ -42,45 +42,53 @@ import Icon from "./icons/Icon.astro";
   </div>
 </div>
 
+      
 <script>
-  // Type alias for supported languages
-  type TLanguage = "en" | "fr";
-  // array of supported languages
-  const languages: TLanguage[] = ["en", "fr"];
+  // Type alias for supported languages - 
+  type TLanguage = "en" | "fr" | "es" | "ru" | "de" | "pt" | "it";
+  // array of supported languages - 
+  const languages: TLanguage[] = ["en", "fr", "es", "ru", "de", "pt", "it"];
 
   document.addEventListener("DOMContentLoaded", function () {
     // Only target language picker links
     const languageLinks = document.querySelectorAll(".hs-dropdown-menu[aria-labelledby='hs-dropdown-hover-event'] a");
-    
     languageLinks.forEach((element) => {
       const link = element as HTMLAnchorElement;
+      // Bu satırın dil kodunu doğru alması lazım, test edin.
       const lang = link
         .getAttribute("href")
-        ?.replace("/", "")
-        .replace("/", "") as TLanguage;
+        ?.replace(/^\//, '') // Baştaki / karakterini kaldırır (hem "" hem de "fr" için çalışır)
+         as TLanguage | ""; // Tip olarak boş string ihtimalini de ekleyelim
 
       link.addEventListener("click", function (event) {
         event.preventDefault();
 
         const url = new URL(window.location.href);
-        
-        const currentPath = url.pathname
+        // Mevcut yoldan dil kodlarını (varsa) ve boş kısımları temizle
+        const currentPathParts = url.pathname
           .split("/")
-          .filter((part) => part && !languages.includes(part as TLanguage))
-          .join("/");
+          .filter((part) => part && !languages.includes(part as TLanguage));
+        const currentPath = currentPathParts.join("/");
+
 
         let newPath = "";
+        // Yeni dil 'en' değilse ve boş değilse önek ekle
         if (lang && lang !== "en") {
-          newPath = `/${lang}/${currentPath}`;
+          // Eğer currentPath zaten varsa önüne / ekle, yoksa ekleme
+          newPath = `/${lang}${currentPath ? '/' + currentPath : ''}`;
         } else {
-          newPath = `/${currentPath}`;
+          // 'en' veya boşsa, sadece currentPath (varsa / ile)
+           newPath = `/${currentPath}`;
         }
 
+        // Çoklu eğik çizgileri tek'e indir ve kök dizin için sadece / kullan
         newPath = newPath.replace(/\/+/g, "/");
-        if (newPath === "") newPath = "/";
-        
+        if (newPath === "" || newPath === "/") newPath = "/"; // Kök dizini garantile
+
         window.location.href = `${url.origin}${newPath}${url.search}`;
       });
     });
   });
 </script>
+
+    
