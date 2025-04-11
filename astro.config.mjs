@@ -1,123 +1,79 @@
+// astro.config.mjs
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
-import sitemap from "@astrojs/sitemap";
-import compressor from "astro-compressor";
-import starlight from "@astrojs/starlight";
-
-import mdx from "@astrojs/mdx";
+import tailwindcss from "@tailwindcss/vite"; // Tailwind CSS entegrasyonu için gerekli
+import sitemap from "@astrojs/sitemap"; // Otomatik site haritası oluşturmak için
+import compressor from "astro-compressor"; // HTML, CSS, JS sıkıştırması için
+import mdx from "@astrojs/mdx"; // MDX dosyalarını kullanmak için
 
 // https://astro.build/config
 export default defineConfig({
-  // https://docs.astro.build/en/guides/images/#authorizing-remote-images
-  site: "https://screwfast.uk",
+  // Sitenizin canlı domain adresini buraya yazın. Site haritası ve canonical URL'ler için önemlidir.
+  site: "https://krafferoasters.com", // KENDİ DOMAIN ADRESİNİZLE GÜNCELLEYİN
+
+  // Dış kaynaklardan (CDN vb.) Astro'nun Image bileşeni ile görsel kullanmayacaksanız bu kısmı silebilirsiniz.
+  // Örn: image: {},
   image: {
-    domains: ["images.unsplash.com"],
+     domains: [], // Template'den kalan Unsplash domain'ini kaldırdık. Gerekirse kendi domainlerinizi ekleyin.
   },
-  // i18n: {
-  //   defaultLocale: "en",
-  //   locales: ["en", "fr"],
-  //   fallback: {
-  //     fr: "en",
-  //   },
-  //   routing: {
-  //     prefixDefaultLocale: false,
-  //   },
-  // },
+
+  // Çoklu dil yapılandırması
+  i18n: {
+    defaultLocale: "en", // Varsayılan dil İngilizce
+    locales: ["en", "fr", "es", "ru", "de", "pt", "it"], // Desteklenen tüm diller
+    routing: {
+      // Varsayılan dil (İngilizce) için URL'lerde /en/ öneki olmasın.
+      // Yani anasayfa / olacak, Fransızca anasayfa /fr/, İspanyolca /es/ vb.
+      prefixDefaultLocale: false,
+    },
+  },
+
+  // Astro önbellekleme özelliğini etkinleştirir. Genellikle performansa katkı sağlar.
   prefetch: true,
-  integrations: [sitemap({
-    i18n: {
-      defaultLocale: "en", // All urls that don't contain `fr` after `https://screwfast.uk/` will be treated as default locale, i.e. `en`
-      locales: {
-        en: "en", // The `defaultLocale` value must present in `locales` keys
-        fr: "fr",
-      },
-    },
-  }), starlight({
-    title: "ScrewFast Docs",
-    defaultLocale: "root",
-    // https://github.com/withastro/starlight/blob/main/packages/starlight/CHANGELOG.md
-    // If no Astro and Starlight i18n configurations are provided, the built-in default locale is used in Starlight and a matching Astro i18n configuration is generated/used.
-    // If only a Starlight i18n configuration is provided, an equivalent Astro i18n configuration is generated/used.
-    // If only an Astro i18n configuration is provided, the Starlight i18n configuration is updated to match it.
-    // If both an Astro and Starlight i18n configurations are provided, an error is thrown.
-    locales: {
-      root: {
-        label: "English",
-        lang: "en",
-      },
-      de: { label: "Deutsch", lang: "de" },
-      es: { label: "Español", lang: "es" },
-      fa: { label: "Persian", lang: "fa", dir: "rtl" },
-      fr: { label: "Français", lang: "fr" },
-      ja: { label: "日本語", lang: "ja" },
-      "zh-cn": { label: "简体中文", lang: "zh-CN" },
-    },
-    // https://starlight.astro.build/guides/sidebar/
-    sidebar: [
-      {
-        label: "Quick Start Guides",
-        translations: {
-          de: "Schnellstartanleitungen",
-          es: "Guías de Inicio Rápido",
-          fa: "راهنمای شروع سریع",
-          fr: "Guides de Démarrage Rapide",
-          ja: "クイックスタートガイド",
-          "zh-cn": "快速入门指南",
-        },
-        autogenerate: { directory: "guides" },
-      },
-      {
-        label: "Tools & Equipment",
-        items: [
-          { label: "Tool Guides", link: "tools/tool-guides/" },
-          { label: "Equipment Care", link: "tools/equipment-care/" },
-        ],
-      },
-      {
-        label: "Construction Services",
-        autogenerate: { directory: "construction" },
-      },
-      {
-        label: "Advanced Topics",
-        autogenerate: { directory: "advanced" },
-      },
-    ],
-    social: {
-      github: "https://github.com/mearashadowfax/ScrewFast",
-    },
-    disable404Route: true,
-    customCss: ["./src/assets/styles/starlight.css"],
-    favicon: "/favicon.ico",
-    components: {
-      SiteTitle: "./src/components/ui/starlight/SiteTitle.astro",
-      Head: "./src/components/ui/starlight/Head.astro",
-      MobileMenuFooter: "./src/components/ui/starlight/MobileMenuFooter.astro",
-      ThemeSelect: "./src/components/ui/starlight/ThemeSelect.astro",
-    },
-    head: [
-      {
-        tag: "meta",
-        attrs: {
-          property: "og:image",
-          content: "https://screwfast.uk" + "/social.webp",
+
+  // Kullanılacak Astro entegrasyonları
+  integrations: [
+    // Site haritası entegrasyonu (SEO için önemli)
+    sitemap({
+      // Çoklu dil desteği için site haritası yapılandırması
+      i18n: {
+        defaultLocale: "en", // Site haritasında varsayılan dil
+        // Her dil kodu için site haritasında kullanılacak dil etiketini belirtir
+        locales: {
+          en: "en", // İngilizce
+          fr: "fr", // Fransızca
+          es: "es", // İspanyolca
+          ru: "ru", // Rusça
+          de: "de", // Almanca
+          pt: "pt", // Portekizce
+          it: "it", // İtalyanca
         },
       },
-      {
-        tag: "meta",
-        attrs: {
-          property: "twitter:image",
-          content: "https://screwfast.uk" + "/social.webp",
-        },
-      },
-    ],
-  }), compressor({
-    gzip: false,
-    brotli: true,
-  }), mdx()],
+    }),
+
+    // Starlight entegrasyonu kaldırıldı.
+
+    // Build sonrası dosyaları sıkıştırmak için (performans)
+    // Brotli genellikle gzip'ten daha iyi sıkıştırma sağlar, Vercel gibi platformlar destekler.
+    compressor({
+      gzip: false,
+      brotli: true,
+    }),
+
+    // MDX (.mdx) dosyalarını kullanabilmek için
+    mdx()
+  ],
+
+  // Deneysel özellikler (isteğe bağlı)
   experimental: {
+    // Client-side routing için önceden render etme (algılanan performansı artırabilir)
     clientPrerender: true,
   },
+
+  // Vite yapılandırması (Astro'nun altında çalışan build aracı)
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      // Tailwind CSS'in Vite ile çalışmasını sağlar
+      tailwindcss()
+    ],
   },
 });
