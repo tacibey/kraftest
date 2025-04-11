@@ -47,29 +47,25 @@ export default defineConfig({
     plugins: [
       tailwindcss()
     ],
-    // Rollup build seçeneklerini buraya ekleyin
     build: {
       rollupOptions: {
         external: [
-          // Astro-expressive-code sanal modülünü dışarıda bırak
-          "virtual:astro-expressive-code/config"
+          // Astro-expressive-code sanal modüllerini dışarıda bırak
+          "virtual:astro-expressive-code/config",
+          "virtual:astro-expressive-code/api" // <-- BU SATIR EKLENDİ
         ]
       }
     }
   },
-  // VEYA Alternatif olarak, build seçenekleri doğrudan ana config seviyesinde de olabilir:
+  // Alternatif konum (eğer yukarıdaki çalışmazsa):
   /*
   build: {
     rollupOptions: {
       external: [
-        "virtual:astro-expressive-code/config"
+        "virtual:astro-expressive-code/config",
+        "virtual:astro-expressive-code/api" // <-- BURAYA DA EKLENİR
       ]
     }
   },
-  vite: {
-    plugins: [
-      tailwindcss()
-    ],
-  }
   */
 });
